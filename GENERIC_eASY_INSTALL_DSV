@@ -1,0 +1,9 @@
+sudo ln -sf /bin/bash /bin/sh
+bash ~/Downloads/BIOVIA_DS2025Client.bin
+nano ~/BIOVIA/DiscoveryStudio2025/biovia.sh
+#!/bin/bash  
+export LD_LIBRARY_PATH=/home/user/BIOVIA/DiscoveryStudio2025/lib:$LD_LIBRARY_PATH  
+/home/user/BIOVIA/DiscoveryStudio2025/bin/DiscoveryStudio2025  
+chmod +x ~/BIOVIA/DiscoveryStudio2025/biovia.sh
+~/BIOVIA/DiscoveryStudio2025/biovia.sh
+
