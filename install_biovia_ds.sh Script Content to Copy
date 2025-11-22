@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Path to the `.bin` installer (update if different)
+BIN_FILE="$HOME/Downloads/BIOVIA_DS2025Client.bin"
+
+# Directory to extract the installer files
+EXTRACT_DIR="$HOME/Downloads/BIOVIA_installer_extracted"
+
+# Make sure the installer is executable
+chmod +x "$BIN_FILE"
+
+# Create the extraction folder if it does not exist
+mkdir -p "$EXTRACT_DIR"
+
+# Extract the installer into EXTRACT_DIR
+bash "$BIN_FILE" --target "$EXTRACT_DIR" || { echo "Extraction failed"; exit 1; }
+
+cd "$EXTRACT_DIR" || { echo "Cannot cd to extract dir"; exit 1; }
+
+# Locate the install script
+if [ -f install_DSClient.sh ]; then
+  INSTALL_SCRIPT="./install_DSClient.sh"
+elif [ -f client/install_DSClient.sh ]; then
+  INSTALL_SCRIPT="client/install_DSClient.sh"
+else
+  echo "Could not find install_DSClient.sh"; exit 1;
+fi
+
+# Patch the install script: change shebang to bash
+sed -i '1s|^#!/bin/sh|#!/bin/bash|' "$INSTALL_SCRIPT"
+
+# Enable alias expansion if needed
+grep -qxF 'shopt -s expand_aliases' "$INSTALL_SCRIPT" || \
+  sed -i '1a shopt -s expand_aliases' "$INSTALL_SCRIPT"
+
+# Replace echoe alias with plain echo
+sed -i 's/\bechoe\b/echo/g' "$INSTALL_SCRIPT"
+
+# Make the install script executable
+chmod +x "$INSTALL_SCRIPT"
+
+# Run the patched installer
+bash "$INSTALL_SCRIPT"
